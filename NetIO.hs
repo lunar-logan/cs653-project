@@ -35,6 +35,8 @@ mkRangeHeader fromBytes toBytes =
 toBufOps :: BufferType a => Request a -> BufferOp a
 toBufOps _ = bufferOps
 
+-- Returns a 'Request' object given the url as a 'String' and a list of 
+-- HTTP headers 
 nioGetRequest :: BufferType ty => String -> [Header] -> Request ty
 nioGetRequest urlString headers = 
 	case parseURI urlString of
@@ -42,14 +44,16 @@ nioGetRequest urlString headers =
 		Just url -> req
 			where 
 				req = 
-					Request { rqURI  	= url
-							, rqBody 	= empty
-							, rqHeaders = headers
-							, rqMethod  = GET	 	
+					Request { rqURI		= url
+							, rqBody	= empty
+							, rqHeaders	= headers
+							, rqMethod	= GET	 	
 							}
 				empty = buf_empty (toBufOps req)
 		
-		
+
+-- Reads bytes from an HTTP server. 
+-- Takes url and a list of HTTP headers as input, last param *must* always be 0
 nioReadHTTP :: FilePath -> [Header] -> Int -> IO String
 nioReadHTTP urlString headers nBytes = do
 	rsp <- Network.HTTP.simpleHTTP (nioGetRequest urlString headers)
@@ -57,6 +61,7 @@ nioReadHTTP urlString headers nBytes = do
 	return content
 
 
+-- Helper function to read byte ranges from HTTP servers. 
 nioReadHTTP' :: String -> Int -> Int -> IO String
 nioReadHTTP' urlString fromBytes toBytes = do
 	nioReadHTTP urlString headers 0
