@@ -49,11 +49,11 @@ nioGetRequest urlString headers =
 							}
 				empty = buf_empty (toBufOps req)
 		
+		
 nioReadHTTP :: FilePath -> [Header] -> Int -> IO String
 nioReadHTTP urlString headers nBytes = do
 	rsp <- Network.HTTP.simpleHTTP (nioGetRequest urlString headers)
 	content <- getResponseBody rsp
-	--res_text <- fmap (take nBytes) (getResponseBody rsp)
 	return content
 
 
