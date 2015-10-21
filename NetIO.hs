@@ -12,6 +12,7 @@ import Network.URI
 import Network.Stream
 import Network.BufferType ( BufferOp(..), BufferType(..) )
 
+
 {-
 	Given the byte range, this function creates the "range" header of the HTTP request
 	According to IETF specs range header is of the following format:
@@ -28,15 +29,23 @@ mkRangeHeader fromBytes toBytes =
 	else 
 		mkHeader HdrRange ("bytes=" ++ (show fromBytes) ++ "-" ++ (show toBytes))
 
+
 {- 
 	Copied from the following URL:
 	https://hackage.haskell.org/package/HTTP-4000.2.20/docs/src/Network-HTTP-Base.html#mkRequest
+
+	I've no idea what it does and how it does whatever it does.
 -}
 toBufOps :: BufferType a => Request a -> BufferOp a
 toBufOps _ = bufferOps
 
--- Returns a 'Request' object given the url as a 'String' and a list of 
--- HTTP headers 
+
+-- Returns a 'Request' object, given the url and a list of HTTP headers 
+-- These headers must be of type 'Header' defined in the 'Network.HTTP' module.
+-- see 'mkHeader' function for more information
+-- Examples:
+--
+-- > nioGetRequest "http://blog.notespot.in" [] 
 nioGetRequest :: BufferType ty => String -> [Header] -> Request ty
 nioGetRequest urlString headers = 
 	case parseURI urlString of
@@ -52,7 +61,7 @@ nioGetRequest urlString headers =
 				empty = buf_empty (toBufOps req)
 		
 
--- Reads bytes from an HTTP server. 
+-- Reads chunk of bytes from an HTTP/1.1 complaint server. 
 -- Takes url and a list of HTTP headers as input, last param *must* always be 0
 nioReadHTTP :: FilePath -> [Header] -> Int -> IO String
 nioReadHTTP urlString headers nBytes = do
@@ -68,6 +77,8 @@ nioReadHTTP' urlString fromBytes toBytes = do
 	where headers = [mkRangeHeader fromBytes toBytes]
 
 
+-- This function is just for fun and will not be completed in the near future
+-- Pull us if you wanna complete it.
 nioWriteHTTP :: FilePath -> String -> String
 nioWriteHTTP path text = 
 	"Function not yet implemented"
