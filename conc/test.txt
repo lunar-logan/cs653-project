@@ -1,0 +1,14 @@
+HTTP/1.1 206 Partial Content
+Host: hostgator.in
+Content-Length: 25698
+Content-Type: text/html
+
+<!doctype HTML>
+<HTML>
+<head>
+<title>Just a test</title>
+</head>
+<body>
+<h1>Hello World</h1>
+</body>
+</HTML>
