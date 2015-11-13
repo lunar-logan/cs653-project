@@ -11,7 +11,7 @@ import Network.HTTP
 import Network.URI
 import Network.Stream
 import Network.BufferType ( BufferOp(..), BufferType(..) )
-import qualified Data.ByteString.Lazy as B
+import qualified Data.ByteString as B
 
 
 {-
@@ -70,6 +70,8 @@ nioGetRequest urlString headers =
 nioReadHTTP :: FilePath -> [Header] -> Int -> IO B.ByteString
 nioReadHTTP urlString headers nBytes = do
 	rsp <- Network.HTTP.simpleHTTP (nioGetRequest urlString headers)
+	code <- getResponseCode rsp
+	putStrLn $ show code
 	content <- getResponseBody rsp
 	return content
 
@@ -86,12 +88,3 @@ nioReadHTTP' urlString fromBytes toBytes = do
 nioWriteHTTP :: FilePath -> String -> String
 nioWriteHTTP path text = 
 	"Function not yet implemented"
---NetIO Data.ByteString.Lazy> let bs = nioReadHTTP' "http://ftp.gnu.org/pub/gnu/emacs/windows/emacs-22.3-bin-i386.zip" 0 (-1)
-{-
-macs/windows/emacs-22.3-bin-i386.zip" 1831391 (-1)
-*NetIO Data.ByteString.Lazy> bs >>= \bytes -> Data.ByteString.Lazy.writeFile "te
-st.pyexe" bytes
-Interrupted.
-
-4831312
--}
